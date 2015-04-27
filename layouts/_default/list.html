@@ -1,0 +1,14 @@
+<h1> List </h1>
+
+<link rel="stylesheet" href="https://yandex.st/highlightjs/8.0/styles/default.min.css">
+<script src="https://yandex.st/highlightjs/8.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<p> This is Hugo Version: {{ .Data.Singular }} </p>
+<p> This is title : {{ .Title }} </p>
+
+
+
+{{ range .Data.Pages }}
+{{ .Render "li"}}
+{{ end }}

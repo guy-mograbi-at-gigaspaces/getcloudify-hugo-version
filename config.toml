@@ -1,0 +1,3 @@
+baseurl = "http://docs.getcloudify.org/"
+languageCode = "en-us"
+title = "Cloudify Documentation"
