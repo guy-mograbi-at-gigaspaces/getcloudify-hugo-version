@@ -26,7 +26,7 @@ module.exports = function (grunt) {
             version: {
                 src: ['config.toml'],
                 overwrite:true,
-                replacements: [{ from: /permalinks= .*/, to: 'permalinks= "/<%= pkg.version %>/:title"'}]
+                replacements: [{ from: /guide= .*/, to: 'guide= "/<%= pkg.version %>/:title"'}]
             },
             tags: {
                 src: ['content/guide/3.2/*.md'],

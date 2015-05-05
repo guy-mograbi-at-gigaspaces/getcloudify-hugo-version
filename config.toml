@@ -3,4 +3,4 @@ languageCode = "en-us"
 title = "Cloudify Documentation"
 theme="hugo-redlounge"
 [permalinks]
-   guide = "/3.2/:title/"
+   guide= "/3.2.0/:title"
