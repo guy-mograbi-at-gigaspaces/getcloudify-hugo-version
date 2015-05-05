@@ -123,6 +123,23 @@ module.exports = function (grunt) {
             devserver: {
                 path: 'http://localhost:1313'
             }
+        },
+
+        sync:{
+            content: {
+                files: [
+                    {src: ['<%= build.content.root %>/content/**'], dest: 'content'}, // includes files in path and its subdirs
+                ],
+                verbose: true,
+                pretend:true
+
+            }
+        },
+        watch: {
+            content: {
+                files: ['<%= build.content.root %>/**'],
+                tasks: ['sync:content']
+            }
         }
     });
 
@@ -177,12 +194,13 @@ module.exports = function (grunt) {
         grunt.config.data.aws = grunt.file.readJSON(process.env.AWS_JSON || './dev/aws.json'); // Read the file
     });
 
+    grunt.registerTask('syncAll',['readConfiguration','sync:content']);
     grunt.registerTask('cleanAll', ['clean']);
     grunt.registerTask('serve', ['open:devserver', 'shell:server']);
     grunt.registerTask('server', ['serve']);
 
     grunt.registerTask('replaceVersion', ['normalizeVersion', 'replace:version']);
-    grunt.registerTask('build', ['cleanAll', 'readConfiguration','replaceVersion', 'jshint', 'shell:build', 'listAllBranches']);
+    grunt.registerTask('build', ['cleanAll', 'readConfiguration','sync:content','replaceVersion', 'jshint', 'shell:build', 'listAllBranches','watch:sync']);
 
     grunt.registerTask('upload', ['readS3Keys', 'aws_s3:upload']);
     grunt.registerTask('default', 'build');
