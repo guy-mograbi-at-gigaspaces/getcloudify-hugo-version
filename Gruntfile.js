@@ -1,5 +1,7 @@
 'use strict';
 var request = require('request');
+var _ = require('lodash');
+var path = require('path');
 
 module.exports = function (grunt) {
 
@@ -8,7 +10,25 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
 
+        clean: ['build', 'public'],
         pkg: require('./package.json'),
+        symlink: {
+            options: {
+                overwrite: false
+            },
+            content: {
+                files: [
+                    {
+                        src: '<%= build.content.root %>/content',
+                        'dest': 'content'
+                    },
+                    {
+                        src: '<%= build.content.root %>/static/images',
+                        dest: 'static/images/<%= build.content.version %>'
+                    }
+                ]
+            }
+        },
         jshint: {
             options: {
                 jshintrc: '.jshintrc',
@@ -17,8 +37,6 @@ module.exports = function (grunt) {
             all: {
                 files: {
                     src: [
-
-                        'Gruntfile.js',
                         'static/javascripts/**/*.js'
                     ]
                 }
@@ -28,7 +46,7 @@ module.exports = function (grunt) {
             version: {
                 src: ['config.toml'],
                 overwrite: true,
-                replacements: [{from: /permalinks= .*/, to: 'permalinks= "/<%= pkg.version %>/:title"'}]
+                replacements: [{from: /guide= .*/, to: 'guide= "<%= pkg.permalink %>"'}]
             },
             tags: {
                 src: ['content/guide/3.2/*.md'],
@@ -90,6 +108,9 @@ module.exports = function (grunt) {
             options: {
                 stdout: true
             },
+            'removeSymlinks' : {
+                command : 'find -type l -delete'
+            },
             server: {
                 command: 'hugo server --buildDrafts --watch'
             },
@@ -141,22 +162,48 @@ module.exports = function (grunt) {
 
     });
 
-    grunt.registerTask('normalizeVersion', function(){
-        if ( grunt.config.data.pkg.version === '0.0.0'){
+    grunt.registerTask('normalizeVersion', function () {
+        if (grunt.config.data.build.content && grunt.config.data.build.content.version  ){
+            grunt.config.data.pkg.version = grunt.config.data.build.content.version;
+        }
+        if (grunt.config.data.pkg.version === '0.0.0') {
             grunt.log.ok('normalized');
             grunt.config.data.pkg.version = '';
-        }else{
+            grunt.config.data.pkg.permalink = '/:title';
+        } else {
+            grunt.config.data.pkg.permalink = '/' + grunt.config.data.pkg.version + '/:title';
             grunt.log.ok('no need to normalize');
         }
+        grunt.log.ok('permalink is <%= pkg.permalink%>');
+    });
+
+    // since we want the content to come from a different branch
+    // we need some configuration as to where that content is.
+    grunt.registerTask('readConfiguration', function () {
+        var configFile = process.env.CONFIG_JSON || './dev/config.json';
+        var b = {content: {}};
+        if (grunt.file.exists(configFile)) {
+            _.merge(b, grunt.file.readJSON(configFile));
+        }
+        if (process.env.GETCLOUDIFY_CONTENT_ROOT) {
+            b.content.root = process.env.GETCLOUDIFY_CONTENT_ROOT;
+        }
+        b.content.version = grunt.file.readJSON(path.join(b.content.root, 'package.json')).version;
+        grunt.config.data.build = b;
+        grunt.log.ok('content configuration is', b.content);
     });
 
     grunt.registerTask('readS3Keys', function () {
         grunt.config.data.aws = grunt.file.readJSON(process.env.AWS_JSON || './dev/aws.json'); // Read the file
     });
+
+    grunt.registerTask('cleanAll', ['clean','shell:removeSymlinks']);
     grunt.registerTask('serve', ['open:devserver', 'shell:server']);
     grunt.registerTask('server', ['serve']);
 
-    grunt.registerTask('build', ['normalizeVersion','jshint', 'shell:build', 'listAllBranches']);
+    grunt.registerTask('linkToContent', ['readConfiguration', 'symlink']);
+    grunt.registerTask('replaceVersion', ['normalizeVersion', 'replace:version']);
+    grunt.registerTask('build', ['cleanAll', 'readConfiguration','symlink','replaceVersion', 'jshint', 'shell:build', 'listAllBranches']);
 
     grunt.registerTask('upload', ['readS3Keys', 'aws_s3:upload']);
     grunt.registerTask('default', 'build');
