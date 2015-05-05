@@ -19,7 +19,6 @@
     "jshint-stylish": "~1.0.1",
     "grunt-text-replace": "~0.4.0",
     "request": "~2.55.0",
-    "grunt-contrib-symlink": "~0.3.0",
     "grunt-contrib-clean": "~0.6.0",
     "lodash": "~3.8.0",
     "grunt-contrib-watch": "~0.6.1"
