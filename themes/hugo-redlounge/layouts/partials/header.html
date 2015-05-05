@@ -35,12 +35,13 @@
 
   {{ partial "syntaxhighlight.html" . }}
 
-  {{ if .Params.lightbox }}
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    {{ if .Params.lightbox }}
   <link rel="stylesheet" type="text/css" href="{{ .Site.BaseUrl }}/css/lightbox.css">
   <script src="{{ .Site.BaseUrl }}/js/lightbox.min.js"></script>
-  {{ end }}
 
+  {{ end }}
+    <script src="{{ .Site.BaseUrl }}/javascript/getcloudify.js"></script>
   {{ if .Site.Params.categoriescss }}
     <link rel="stylesheet" type="text/css" href="{{ .Site.Params.categoriescss }}">
   {{ end }}
