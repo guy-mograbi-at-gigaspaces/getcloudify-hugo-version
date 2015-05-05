@@ -143,7 +143,10 @@ module.exports = function (grunt) {
 
     grunt.registerTask('normalizeVersion', function(){
         if ( grunt.config.data.pkg.version === '0.0.0'){
+            grunt.log.ok('normalized');
             grunt.config.data.pkg.version = '';
+        }else{
+            grunt.log.ok('no need to normalize');
         }
     });
 
