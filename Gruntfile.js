@@ -12,23 +12,6 @@ module.exports = function (grunt) {
 
         clean: ['build', 'public'],
         pkg: require('./package.json'),
-        symlink: {
-            options: {
-                overwrite: false
-            },
-            content: {
-                files: [
-                    {
-                        src: '<%= build.content.root %>/content',
-                        'dest': 'content'
-                    },
-                    {
-                        src: '<%= build.content.root %>/static/images',
-                        dest: 'static/images/<%= build.content.version %>'
-                    }
-                ]
-            }
-        },
         jshint: {
             options: {
                 jshintrc: '.jshintrc',
@@ -107,9 +90,6 @@ module.exports = function (grunt) {
         shell: {
             options: {
                 stdout: true
-            },
-            'removeSymlinks' : {
-                command : 'find -type l -delete'
             },
             server: {
                 command: 'hugo server --buildDrafts --watch'
@@ -197,13 +177,12 @@ module.exports = function (grunt) {
         grunt.config.data.aws = grunt.file.readJSON(process.env.AWS_JSON || './dev/aws.json'); // Read the file
     });
 
-    grunt.registerTask('cleanAll', ['clean','shell:removeSymlinks']);
+    grunt.registerTask('cleanAll', ['clean']);
     grunt.registerTask('serve', ['open:devserver', 'shell:server']);
     grunt.registerTask('server', ['serve']);
 
-    grunt.registerTask('linkToContent', ['readConfiguration', 'symlink']);
     grunt.registerTask('replaceVersion', ['normalizeVersion', 'replace:version']);
-    grunt.registerTask('build', ['cleanAll', 'readConfiguration','symlink','replaceVersion', 'jshint', 'shell:build', 'listAllBranches']);
+    grunt.registerTask('build', ['cleanAll', 'readConfiguration','replaceVersion', 'jshint', 'shell:build', 'listAllBranches']);
 
     grunt.registerTask('upload', ['readS3Keys', 'aws_s3:upload']);
     grunt.registerTask('default', 'build');
