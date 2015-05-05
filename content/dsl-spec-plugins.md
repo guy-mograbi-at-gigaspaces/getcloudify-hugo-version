@@ -12,22 +12,22 @@ terminology_link: reference-terminology.html
 agent_packager_link: agents-packager.html
 plugin_authoring_link: guide-plugin-creation.html
 ---
-{%summary%}{{page.abstract}}{%endsummary%}
-{%summary%}
+{{% gsSummary %}}
+{{% gsSummary %}}
 By declaring plugins we can install python modules and use the installed or preinstalled modules to perform different operations. We can also decide where a specific plugin's operations will be executed.
-{%endsummary%}
+{{% /gsSummary %}}
 
 # Plugins Declaration
 
 The `plugins` section is a dictionary where each item in the dictionary represents a plugin to use in the [blueprint]({{page.terminology_link}}#blueprint).
 
-{%highlight yaml%}
+{{% gsHighlight  yaml %}}
 plugins:
   plugin1:
     ...
   plugin2:
     ...
-{%endhighlight%}
+{{% /gsHighlight %}}
 
 ## Plugin Definition
 
@@ -42,7 +42,7 @@ install           | no          | boolean     | Whether to install the plugin or
 
 Example:
 
-{%highlight yaml%}
+{{% gsHighlight  yaml %}}
 tosca_definitions_version: cloudify_dsl_1_1
 
 imports:
@@ -68,7 +68,7 @@ node_templates:
         create: openstack.nove_plugin.server.create
         preconfigure: ruby.script_executor.tasks.run
         configure: puppet.application_server.configure
-{%endhighlight%}
+{{% /gsHighlight %}}
 
 In the above example, we configure 3 plugins:
 
@@ -80,9 +80,9 @@ We then configure a `vm` node of type `openstack.nodes.Server` which uses a cust
 
 The `openstack` plugin's operations will be executed on the `central_deployment_agent` (i.e the [deployment agent]({{page.terminology_link}}#deployment-agent) running in the manager) and the `puppet` and `ruby` plugins' operations will be executed on the `host_agent`s (i.e. the [host agent]({{page.terminology_link}}#host-agent) running in the `vm`'s node instances).
 
-{%note title=Note%}
+{{% gsNote title="Note" %}}
 We declared the `install` variables to be `false` when declaring the ruby scripts executor plugin. This was done since we're using a custom Cloudify agent we created using the [agent-packager]({{page.agent_packager_link}}) which is already provided with this plugin so no installation is necessary.
-{%endnote%}
+{{% /gsNote %}}
 
 Essentially:
 

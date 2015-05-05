@@ -4,17 +4,18 @@ title: Node Templates
 category: DSL Specification
 publish: true
 pageord: 300
+url: guy-mograbi
 
 ---
-{%summary%}
+{{% gsSummary %}}
 Node templates represent the actual instances of [node types](dsl-spec-node-types.html) which would eventually represent a running application/service as described in the blueprint.
-{%endsummary%}
+{{% /gsSummary %}}
 
 # Declaration
 
 The `node_templates` section in the DSL is a dictionary where each key is a node template.
 
-{%highlight yaml%}
+{{% gsHighlight  yaml %}}
 tosca_definitions_version: cloudify_dsl_1_0
 
 imports:
@@ -25,7 +26,7 @@ node_templates:
     ...
   node_template_2:
     ...
-{%endhighlight%}
+{{% /gsHighlight %}}
 
 
 ## Definition
@@ -46,7 +47,7 @@ relationships | no       | relationships | Used for specifying the [relationship
 ### Definition Example:
 
 
-{%highlight yaml%}
+{{% gsHighlight  yaml %}}
 node_templates:
   node_template_1:
     type: ...
@@ -58,7 +59,7 @@ node_templates:
       ...
     relationships:
       ...
-{%endhighlight%}
+{{% /gsHighlight %}}
 
 
 
@@ -75,13 +76,13 @@ deploy        | no       | integer  | 1       | The number of [node instances](r
 
 ### Example:
 
-{%highlight yaml%}
+{{% gsHighlight  yaml %}}
 node_templates:
   vm:
     type: cloudify.openstack.nodes.Compute
     instances:
       deploy: 5
-{%endhighlight%}
+{{% /gsHighlight %}}
 
 In the previous example, the `vm` node would have 5 instances when deployed.
 
@@ -92,7 +93,7 @@ More informatiom about number of instances combined with relationships can be fo
 
 # Example
 
-{%highlight yaml%}
+{{% gsHighlight  yaml %}}
 node_types:
   # The following node type is used in the node templates section
   nodes.Nginx:
@@ -137,7 +138,7 @@ node_templates:
     relationships:
       - type: cloudify.relationships.contained_in
         target: vm
-{%endhighlight%}
+{{% /gsHighlight %}}
 
 
 

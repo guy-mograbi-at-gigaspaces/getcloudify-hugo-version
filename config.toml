@@ -1,3 +1,4 @@
-baseurl = "http://docs.getcloudify.org/"
+baseurl = "http://getcloudify.gsdev.info.s3-website-us-east-1.amazonaws.com"
 languageCode = "en-us"
 title = "Cloudify Documentation"
+permalinks= "/3.2/:title"

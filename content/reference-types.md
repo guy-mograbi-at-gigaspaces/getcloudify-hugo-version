@@ -8,7 +8,7 @@ pageord: 300
 
 terminology_link: reference-terminology.html
 ---
-{%summary%} {{page.abstract}}{%endsummary%}
+{{% gsSummary %}}
 
 # Abstract Types
 The following [types]({{page.terminology_link}}#type) are basic types from which concrete types with specific plugin implementations are derived.
@@ -95,7 +95,7 @@ It currently has two configuration properties: `cloudify` and `cloudify_packages
 Configuration for Cloudify Manager
 
 ### schema
-{% highlight yaml %}
+{{% gsHighlight  yaml  %}}
 cloudify:
     resources_prefix: {prefix}
     cloudify_agent:
@@ -114,7 +114,7 @@ cloudify:
             install_args: {install_args}
         my_plugin2:
             ...
-{%endhighlight%}
+{{% /gsHighlight %}}
 
 ### parameters details
 * `resources_prefix` An optional prefix to be added to all resources' names. It is recommended for the prefix to end with an underscore or a dash. If omitted, no prefix will be added (Default: `""`)
@@ -138,7 +138,7 @@ cloudify:
 Links to Cloudify packages to be installed on the manager
 
 ### schema
-{% highlight yaml %}
+{{% gsHighlight  yaml  %}}
 cloudify_packages:
     server:
         compnonets_package_url: {url}
@@ -148,7 +148,7 @@ cloudify_packages:
         ubuntu_agent_url: {url}
         centos_agent_url: {url}
         windows_agent_url: {url}
-{%endhighlight%}
+{{% /gsHighlight %}}
 
 ### parameters details
 

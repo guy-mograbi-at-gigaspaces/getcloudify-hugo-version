@@ -7,7 +7,7 @@ abstract: Cloudify's Management security configuration and client usage
 pageord: 500
 
 ---
-{%summary%} {{page.abstract}}{%endsummary%}
+{{% gsSummary %}}
 
 # Overview
 
@@ -27,9 +27,9 @@ This guide will quickly explain how to bootstrap a secured manager and use if fr
 
 # Clients
 ## Web UI
-{%note title=Note%}
+{{% gsNote title="Note" %}}
 Availbale in the Commercial version only
-{%endnote%}
+{{% /gsNote %}}
 ## Cloudify CLI
 ## CURL
 
@@ -54,7 +54,7 @@ To do this, the manager blueprint should be updated as follows.
 Say you write a custom authentication provider. The code itself should be structured in a similar way to how [operations/workflows](guide-plugin-creation.html#creating-a-plugin-project) plugins are structured, that is to say, it should be structured as a valid python package.
 
 You specify the package location under the `plugins` section in the `cloudify` property of the `manager` node in the manager blueprint like this:
-{% highlight yaml %}
+{{% gsHighlight  yaml  %}}
 node_templates:
   ...
   manager:
@@ -76,7 +76,7 @@ node_templates:
             # see description below
             source: https://github.com/my-org/my-auth-provider/archive/master.zip
 
-{% endhighlight %}
+{{% /gsHighlight %}}
 
 
 ### Configuration
@@ -90,8 +90,8 @@ The keys of this dict are arbitrary names. In the previous example we used `my_a
 * `install_args` You may pass additional arguments to the `pip install` command used to install your plugin.
 
 
-{%note title=Note%}
+{{% gsNote title="Note" %}}
 When the term *plugin* is used in this section, it should not be confused with operation and workflow plugins (except when explicitly mentioned otherwise).
 
 When we use this term here, we simply mean: custom code that gets installed in the manager environment. In other words, plugins here cannot be used as operations and workflows plugins.
-{%endnote%}
+{{% /gsNote %}}

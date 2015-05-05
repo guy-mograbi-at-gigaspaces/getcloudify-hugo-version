@@ -9,7 +9,7 @@ pageord: 300
 vcloud_deploy_link: quickstart-vcloud.html
 
 ---
-{%summary%} {{page.abstract}}{%endsummary%}
+{{% gsSummary %}}
 
 
 # vCloud Adjustments
@@ -27,16 +27,16 @@ Let's start by using the *nodecellar* blueprint we used in the [Blueprint Author
 The first addition we are going to make to this blueprint is importing the vCloud plugin YAML file. <br>
 This file contains the vcloud plugin and types definitions.
 
-{%highlight yaml%}
+{{% gsHighlight  yaml %}}
 imports:
   - https://raw.githubusercontent.com/cloudify-cosmo/tosca-vcloud-plugin/master/plugin.yaml
-{%endhighlight%}
+{{% /gsHighlight %}}
 
 ## Step 2: Changing our inputs
 
 If you recall, when we built the Single Host version of the blueprint in the [Blueprint Authoring Guide](guide-blueprint.html), we defined some `inputs`:
 
-{%highlight yaml%}
+{{% gsHighlight  yaml %}}
 inputs:
   host_ip:
     description: >
@@ -48,11 +48,11 @@ inputs:
     description: >
       Path to a private key that resided on the management machine.
       SSH-ing into agent machines will be done with this key.
-{%endhighlight%}
+{{% /gsHighlight %}}
 
 Now, we are not using an existing vm, but rather letting vCloud provision vm's by demand, so instead, we will use these inputs:
 
-{%highlight yaml%}
+{{% gsHighlight  yaml %}}
 inputs:
   vcloud_username:
       type: string
@@ -90,26 +90,26 @@ inputs:
 
   nodecellar_public_ip:
     type: string
-{%endhighlight%}
+{{% /gsHighlight %}}
 
 
 ## Step 3: Adding the floating IP
 
 A floating IP provides a constant public IP for the application.
 
-{%highlight yaml%}
+{{% gsHighlight  yaml %}}
   nodecellar_floatingip:
     type: cloudify.vcloud.nodes.FloatingIP
     properties:
         floatingip:
             edge_gateway: { get_input: floating_ip_gateway }
-{%endhighlight%}
+{{% /gsHighlight %}}
 
 ## Step 4: Adding management network ports
 
 A port allows to specify VM's network interface parameters.
 
-{%highlight yaml%}
+{{% gsHighlight  yaml %}}
   management_port:
     type: cloudify.vcloud.nodes.Port
     properties:
@@ -117,14 +117,14 @@ A port allows to specify VM's network interface parameters.
             network: { get_input: management_network_name }
             ip_allocation_mode: dhcp
             primary_interface: true
-{%endhighlight%}
+{{% /gsHighlight %}}
 
 ## Step 5: Adding the Virtual Machines
 
 The `cloudify.vcloud.nodes.Server` type uses the vCloud REST API to spawn VApps over vCloud.
 We will need two VM's, one for mongod and one for nodejs.
 
-{%highlight yaml%}
+{{% gsHighlight  yaml %}}
   mongod_host:
     type: cloudify.vcloud.nodes.Server
     properties:
@@ -158,20 +158,20 @@ We will need two VM's, one for mongod and one for nodejs.
           type: cloudify.vcloud.server_connected_to_port
         - target: nodecellar_floatingip
           type: cloudify.vcloud.server_connected_to_floating_ip
-{%endhighlight%}
+{{% /gsHighlight %}}
 
 ## Step 6: Refining our outputs
 
 If you recall, when we built the Single Host version of the blueprint in the [Blueprint Authoring Guide](guide-blueprint.html), we defined `outputs`:
 
-{%highlight yaml%}
+{{% gsHighlight  yaml %}}
 outputs:
   endpoint:
     description: Web application endpoint
     value:
       ip_address: { get_property: [host, ip] }
       port: { get_property: [nodecellar, port] }
-{%endhighlight%}
+{{% /gsHighlight %}}
 
 Notice we extracted the host ip by using the `get_property` *intrinsic function*. This will have to be different now.
 The purpose of this output was to expose the application url endpoint.
@@ -179,20 +179,20 @@ The relevant ip address in this case, is the address of the assigned floating ip
 to extract this information we use the `get_attribute` *intrinsic function*, which can access node *runtime properties*, the floating ip node exposes a runtime property
 called *floating_ip_address*, so we can do:
 
-{%highlight yaml%}
+{{% gsHighlight  yaml %}}
 outputs:
   endpoint:
     description: Web application endpoint
     value:
       ip_address: { get_attribute: [ nodecellar_floatingip, public_ip ] }
       port: { get_property: [ nodecellar, port ] }
-{%endhighlight%}
+{{% /gsHighlight %}}
 
 # Final Result
 
 Lets take a look at our full blueprint:
 
-{%highlight yaml%}
+{{% gsHighlight  yaml %}}
 imports:
   - http://www.getcloudify.org/spec/cloudify/3.2/types.yaml
   - https://raw.githubusercontent.com/cloudify-cosmo/tosca-vcloud-plugin/master/plugin.yaml
@@ -377,7 +377,7 @@ outputs:
       ip_address: { get_attribute: [ nodecellar_floatingip, public_ip ] }
       port: { get_property: [ nodecellar, port ] }
 
-{%endhighlight%}
+{{% /gsHighlight %}}
 
 That's it, this a fully functioning blueprint that can be used with a Cloudify Manager to install the nodecellar application on vCloud.
 
