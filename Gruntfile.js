@@ -153,7 +153,7 @@ module.exports = function (grunt) {
     grunt.registerTask('serve', ['open:devserver', 'shell:server']);
     grunt.registerTask('server', ['serve']);
 
-    grunt.registerTask('build', ['jshint', 'shell:build', 'listAllBranches']);
+    grunt.registerTask('build', ['normalizeVersion','jshint', 'shell:build', 'listAllBranches']);
 
     grunt.registerTask('upload', ['readS3Keys', 'aws_s3:upload']);
     grunt.registerTask('default', 'build');
