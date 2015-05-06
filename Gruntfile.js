@@ -10,7 +10,20 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
 
-        clean: ['build', 'public','content/guide'],
+        clean: {
+            all: {
+                files: [{
+                    src: ['build', 'public', 'content/guide','static/**'],
+                    filter: function (filepath) {
+                        if ( filepath.indexOf('static') === 0 ) {
+                            return new RegExp('static/[a-zA-Z]+/\\d{1,2}\\.\\d{1,2}\\.\\d{1,2}').test(filepath);
+                        }else{
+                            return true;
+                        }
+                    }
+                }]
+            }
+        },
         pkg: require('./package.json'),
         jshint: {
             options: {
@@ -125,12 +138,16 @@ module.exports = function (grunt) {
             }
         },
 
-        sync:{
+        sync: {
             content: {
 
                 files: [
-                    {cwd: '<%= build.content.root %>/content',src: ['**'], dest: 'content'},
-                    {cwd: '<%= build.content.root %>/static/images',src: ['**'], dest: 'static/images/<%= build.content.version %>'} // includes files in path and its subdirs
+                    {cwd: '<%= build.content.root %>/content', src: ['**'], dest: 'content'},
+                    {
+                        cwd: '<%= build.content.root %>/static/images',
+                        src: ['**'],
+                        dest: 'static/images/<%= build.content.version %>'
+                    } // includes files in path and its subdirs
                 ],
                 verbose: true
 
@@ -164,7 +181,7 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('normalizeVersion', function () {
-        if (grunt.config.data.build.content && grunt.config.data.build.content.version  ){
+        if (grunt.config.data.build.content && grunt.config.data.build.content.version) {
             grunt.config.data.pkg.version = grunt.config.data.build.content.version;
         }
         if (grunt.config.data.pkg.version === '0.0.0') {
@@ -198,13 +215,13 @@ module.exports = function (grunt) {
         grunt.config.data.aws = grunt.file.readJSON(process.env.AWS_JSON || './dev/aws.json'); // Read the file
     });
 
-    grunt.registerTask('syncAll',['readConfiguration','sync:content']);
+    grunt.registerTask('syncAll', ['readConfiguration', 'sync:content']);
     grunt.registerTask('cleanAll', ['clean']);
     grunt.registerTask('serve', ['open:devserver', 'shell:server']);
     grunt.registerTask('server', ['serve']);
 
     grunt.registerTask('replaceVersion', ['normalizeVersion', 'replace:version']);
-    grunt.registerTask('build', ['cleanAll', 'readConfiguration','sync:content','replaceVersion', 'jshint', 'shell:build', 'listAllBranches','watch:sync']);
+    grunt.registerTask('build', ['cleanAll', 'readConfiguration', 'sync:content', 'replaceVersion', 'jshint', 'shell:build', 'listAllBranches', 'watch:sync']);
 
     grunt.registerTask('upload', ['readS3Keys', 'aws_s3:upload']);
     grunt.registerTask('default', 'build');
