@@ -10,7 +10,7 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
 
-        clean: ['build', 'public'],
+        clean: ['build', 'public','content/guide'],
         pkg: require('./package.json'),
         jshint: {
             options: {
@@ -127,16 +127,20 @@ module.exports = function (grunt) {
 
         sync:{
             content: {
+
                 files: [
-                    {src: ['<%= build.content.root %>/content/**'], dest: 'content'}, // includes files in path and its subdirs
+                    {cwd: '<%= build.content.root %>/content',src: ['**'], dest: 'content'},
+                    {cwd: '<%= build.content.root %>/static/images',src: ['**'], dest: 'static/images/<%= build.content.version %>'} // includes files in path and its subdirs
                 ],
-                verbose: true,
-                pretend:true
+                verbose: true
 
             }
         },
         watch: {
-            content: {
+            options: {
+                spawn: false
+            },
+            sync: {
                 files: ['<%= build.content.root %>/**'],
                 tasks: ['sync:content']
             }
