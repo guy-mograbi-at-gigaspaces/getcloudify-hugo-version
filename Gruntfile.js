@@ -128,7 +128,7 @@ module.exports = function (grunt) {
             },
             upload: {
                 files: [
-                    {dest: '<%= pkg.version %>', cwd: './build', expand: true, src: ['**'], action: 'upload'}
+                    {dest: '', cwd: './build', expand: true, src: ['**'], action: 'upload'}
                 ]
             }
         },
@@ -217,11 +217,11 @@ module.exports = function (grunt) {
 
     grunt.registerTask('syncAll', ['readConfiguration', 'sync:content']);
     grunt.registerTask('cleanAll', ['clean']);
-    grunt.registerTask('serve', ['open:devserver', 'shell:server']);
+    grunt.registerTask('serve', ['open:devserver', 'shell:server', 'watch:sync']);
     grunt.registerTask('server', ['serve']);
 
     grunt.registerTask('replaceVersion', ['normalizeVersion', 'replace:version']);
-    grunt.registerTask('build', ['cleanAll', 'readConfiguration', 'sync:content', 'replaceVersion', 'jshint', 'shell:build', 'listAllBranches', 'watch:sync']);
+    grunt.registerTask('build', ['cleanAll', 'readConfiguration', 'sync:content', 'replaceVersion', 'jshint', 'shell:build', 'listAllBranches']);
 
     grunt.registerTask('upload', ['readS3Keys', 'aws_s3:upload']);
     grunt.registerTask('default', 'build');
