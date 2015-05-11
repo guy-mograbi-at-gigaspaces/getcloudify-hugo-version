@@ -4,7 +4,6 @@ title: Node Templates
 category: DSL Specification
 publish: true
 pageord: 300
-url: guy-mograbi
 
 ---
 {{% gsSummary %}}

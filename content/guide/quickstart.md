@@ -6,6 +6,10 @@ publish: true
 abstract: A quick tutorial for getting started with Cloudify and deploying your first blueprint
 pageord: 100
 
+menu: 
+    main:
+        parent: tutorial
+
 quickstart_openstack_link: quickstart-openstack.html
 blueprint_file_link: https://raw.githubusercontent.com/cloudify-cosmo/cloudify-nodecellar-example/3.1/singlehost-blueprint.yaml
 virtualbox_link: https://www.virtualbox.org/
@@ -18,6 +22,7 @@ installation_general_link: installation-general.html
 
 ---
 {{% gsSummary %}}
+{{% /gsSummary %}}
 
 {{% gsTip title="Try Instantly" %}}
 You can take Cloudify for an instant test drive with an [online trial.](http://getcloudify.org/widget.html)
@@ -70,9 +75,9 @@ The first thing you'll need to do is download the Vagrantfile which Vagrant will
 
 Download this [Vagrantfile]({{page.vagrant_file_link}}) to your local directory. Then, run this command:
 
-{{% gsHighlight  bash %}}
+{{< gsHighlight  bash >}}
 vagrant up
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 Once the cloudify box is up you can access the manager web console through your local browser by pointing the browser to [http://10.10.1.10/](http://10.10.1.10/).
 
@@ -80,9 +85,9 @@ Once the cloudify box is up you can access the manager web console through your 
 
 To connect to the newly Up'd box, type:
 
-{{% gsHighlight  bash %}}
+{{< gsHighlight  bash >}}
 vagrant ssh
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 after which Cloudify's CLI will be at your disposal.
 
@@ -92,12 +97,12 @@ Cloudify uses [blueprints]({{page.terminology_link}}#blueprint) to describe the 
 
 You'll have to clone a sample blueprint from our Github repository.
 
-{{% gsHighlight  bash %}}
+{{< gsHighlight  bash >}}
 cd blueprints
 git clone https://github.com/cloudify-cosmo/cloudify-nodecellar-example
 cd cloudify-nodecellar-example/
 git checkout tags/3.1
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 ## Step 4: Upload the Blueprint and Create a Deployment
 
@@ -107,9 +112,9 @@ In the `cloudify-nodecellar-example` directory that you just cloned, you can see
 
 To upload the blueprint run:
 
-{{% gsHighlight  bash %}}
+{{< gsHighlight  bash >}}
 cfy blueprints upload -b nodecellar -p singlehost-blueprint.yaml
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 The `-b` flag specifies the unique name we've assigned to this blueprint on the Cloudify manager.
 Before creating a deployment, let's see what this blueprint looks like.
@@ -135,11 +140,11 @@ This blueprint defines some input parameters:
 The inputs values are located at ~/cloudify/blueprints/inputs/nodecellar-singlehost.yaml.
 These are the values relevant for our example:
 
-{{% gsHighlight  yaml %}}
+{{< gsHighlight  yaml >}}
 host_ip: 10.10.1.10
 agent_user: vagrant
 agent_private_key_path: /root/.ssh/id_rsa
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 {{% gsNote title="Limitations" %}}
 Currently, these values cannot be changed,
@@ -148,9 +153,9 @@ and are presented here only for the sake of clarity.
 
 Now, we need to create a deployment. To do so, type the following command:
 
-{{% gsHighlight  bash %}}
+{{< gsHighlight  bash >}}
 cfy deployments create -b nodecellar -d nodecellar --inputs ../inputs/nodecellar-singlehost.yaml
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 We've now created a deployment named `nodecellar` based on a blueprint with the same name. This deployment is not yet materialized, since we haven't issued an installation command. If you click the "Deployments" icon in the left sidebar in the web UI, you will see that all nodes are labeled with 0/1, which means they're pending creation.
 
@@ -162,9 +167,7 @@ In Cloudify, installing a certain `deployment` is done by executing
 the a [install]({{page.workflows_link}}#install) [workflow]({{page.terminology_link}}#workflow).
 type the following command in your terminal:
 
-{{% gsHighlight  bash %}}
-cfy executions start -w install -d nodecellar
-{{% /gsHighlight %}}
+{{< gsHighlight  "bash" >}}cfy executions start -w install -d nodecellar{{< /gsHighlight >}}
 
 This will take a couple of minutes, during which the resources will be created and configured.
 
@@ -172,9 +175,9 @@ You can track the installation progress in the web console or in your terminal a
 In your terminal, you will see that each [event]({{page.terminology_link}}#event) is labeled with its time, the deployment name,
 and the node in our topology that it relates to, e.g.
 
-{{% gsHighlight  bash  %}}
+{{< gsHighlight  "bash"  >}}
 2014-12-02T09:46:05 CFY <nodecellar> [nodejs_d36c8] Creating node
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 In the Web UI, you can checkout the Logs/Events page for an overview of all Logs and Events in a specific Manager.
 
@@ -205,9 +208,9 @@ Uninstalling the deployment is just a matter of running another workflow,
 which will teardown all the resources provisioned by the `install` workflow.
 To run the [uninstall]({{page.workflows_link}}#uninstall) workflow, type the following command:
 
-{{% gsHighlight  bash %}}
+{{< gsHighlight  bash >}}
 cfy executions start -w uninstall -d nodecellar
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 Like with the `install` workflow, you can track the progress of the uninstall process in the CLI or the web UI using the events that are displayed in both.
 Once the workflow is completed, you can verify that the resources were indeed destroyed.
@@ -220,17 +223,17 @@ Since this is a single-host example, there aren't any external resources, only a
 The next step is deleting the deployment. Assuming the un-installation went fine, all of the application resources will have been removed.
 The deployment itself still has record on the manager. All of its static and runtime properties are still stored in the manager's database. To clean up the deployment's information on the manager, delete the deployment by running this command.
 
-{{% gsHighlight  bash %}}
+{{< gsHighlight  bash >}}
 cfy deployments delete -d nodecellar
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 ## Step 9: Tear down the Manager
 
 If you have no use for it, you can tear down the manager. This can be done by issuing the following command:
 
-{{% gsHighlight  bash %}}
+{{< gsHighlight  bash >}}
 cfy teardown -f
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 In a real cloud deployment, this will terminate the Manager VM and delete the resources associated with it.
 In our case, since the manager is installed on the same machine the CLI is installed on,
@@ -240,16 +243,16 @@ Once you're done, you can exit the ssh session.
 
 If you want to destroy the machine, run:
 
-{{% gsHighlight  bash %}}
+{{< gsHighlight  bash >}}
 vagrant destroy -f
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 If you want to start the same machine again, just "Up" it.
 If you want to completely remove the box from your machine, run:
 
-{{% gsHighlight  bash %}}
+{{< gsHighlight  bash >}}
 vagrant box remove cloudify-box
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 # What's Next
 
