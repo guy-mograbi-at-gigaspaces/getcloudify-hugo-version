@@ -4,3 +4,7 @@ node_modules
 static/bower_components
 build
 dev
+.sass-cache
+**/3.2.0
+content
+

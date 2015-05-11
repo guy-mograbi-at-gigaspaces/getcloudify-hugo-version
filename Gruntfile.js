@@ -7,9 +7,24 @@ module.exports = function (grunt) {
 
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
+    var javascriptSources = [
+        'static/javascript/getcloudify.js',
+        'static/javascript/directives/**/*.js',
+        'static/javascript/controller/**/*.js'
+    ];
 
     grunt.initConfig({
 
+        sass: {
+            dist: {
+                options: {
+                    style: 'expanded'
+                },
+                files: {
+                    'public/style/template.css': 'sass/template.scss'
+                }
+            }
+        },
         clean: {
             all: {
                 files: [{
@@ -38,6 +53,27 @@ module.exports = function (grunt) {
                 }
             }
         },
+        uglify: {
+            options: {
+                mangle: false
+            },
+            getcloudify: {
+                files: {
+                    'public/javascript/getcloudify.min.js': ['public/javascript/getcloudify.all.js'],
+                    'build/javascript/getcloudify.min.js': ['build/javascript/getcloudify.all.js']
+                }
+            }
+        },
+        concat: {
+            public: {
+                src: javascriptSources,
+                dest: 'public/javascript/getcloudify.all.js'
+            },
+            build: {
+                src: javascriptSources,
+                dest: 'build/javascript/getcloudify.all.js'
+            }
+        },
         replace: {
             version: {
                 src: ['config.toml'],
@@ -55,10 +91,10 @@ module.exports = function (grunt) {
                     to: '{{% /gsSummary %}}'
                 }, {
                     from: /{%.?highlight(.*)%}/g,
-                    to: '{{% gsHighlight $1 %}}'
+                    to: '{{< gsHighlight $1 >}}'
                 }, {
                     from: /{%.?endhighlight(.*)%}/g,
-                    to: '{{% /gsHighlight %}}'
+                    to: '{{< /gsHighlight >}}'
                 }, {
                     from: /{%.?note.*title.*=((\s|\w)*)%}/g,
                     to: '{{% gsNote title="$1" %}}'
@@ -104,16 +140,12 @@ module.exports = function (grunt) {
             options: {
                 stdout: true
             },
-            server: {
-                command: 'hugo server --buildDrafts --watch'
-            },
             build: {
-                command: 'hugo --theme=hugo-redlounge -d build/ '
-            },
-            deploy: {
-                command: 'rsync -az --force --progress -e "ssh" build/ user@yourhost.com:/var/www/some/webroot/'
+                command: 'hugo -d build/ '
             }
+
         },
+
 
         aws_s3: {
             options: {
@@ -158,8 +190,16 @@ module.exports = function (grunt) {
                 spawn: false
             },
             sync: {
-                files: ['<%= build.content.root %>/**'],
+                files: ['<%= build.content.root %>/content/**'],
                 tasks: ['sync:content']
+            },
+            sass: {
+                files: ['sass/**'],
+                tasks: ['sass']
+            },
+            javascript: {
+                files: ['static/javascript/**'],
+                tasks: ['concat','uglify']
             }
         }
     });
@@ -180,6 +220,22 @@ module.exports = function (grunt) {
 
     });
 
+    grunt.registerTask('hugoServer', function(){
+        var spawn = require('child_process').spawn;
+        var server = spawn('hugo' , ['server','--buildDrafts','--watch']);
+        server.stdout.on('data', function(data) {
+            console.log(data.toString());
+        });
+        server.stderr.on('data', function(data) {
+            console.log(data.toString());
+        });
+        process.on('exit', function() {
+            grunt.log.writeln('killing myserver...');
+            server.kill();
+            grunt.log.writeln('killed myserver');
+        });
+    });
+
     grunt.registerTask('normalizeVersion', function () {
         if (grunt.config.data.build.content && grunt.config.data.build.content.version) {
             grunt.config.data.pkg.version = grunt.config.data.build.content.version;
@@ -187,9 +243,9 @@ module.exports = function (grunt) {
         if (grunt.config.data.pkg.version === '0.0.0') {
             grunt.log.ok('normalized');
             grunt.config.data.pkg.version = '';
-            grunt.config.data.pkg.permalink = '/:title';
+            grunt.config.data.pkg.permalink = '/:filename';
         } else {
-            grunt.config.data.pkg.permalink = '/' + grunt.config.data.pkg.version + '/:title';
+            grunt.config.data.pkg.permalink = '/' + grunt.config.data.pkg.version + '/:filename';
             grunt.log.ok('no need to normalize');
         }
         grunt.log.ok('permalink is <%= pkg.permalink%>');
@@ -217,11 +273,11 @@ module.exports = function (grunt) {
 
     grunt.registerTask('syncAll', ['readConfiguration', 'sync:content']);
     grunt.registerTask('cleanAll', ['clean']);
-    grunt.registerTask('serve', ['open:devserver', 'shell:server', 'watch:sync']);
+    grunt.registerTask('serve', ['readConfiguration', 'sync:content','open:devserver','hugoServer','watch']);
     grunt.registerTask('server', ['serve']);
 
     grunt.registerTask('replaceVersion', ['normalizeVersion', 'replace:version']);
-    grunt.registerTask('build', ['cleanAll', 'readConfiguration', 'sync:content', 'replaceVersion', 'jshint', 'shell:build', 'listAllBranches']);
+    grunt.registerTask('build', ['cleanAll', 'readConfiguration', 'sync:content', 'replaceVersion', 'jshint', 'shell:build', 'concat','uglify','listAllBranches']);
 
     grunt.registerTask('upload', ['readS3Keys', 'aws_s3:upload']);
     grunt.registerTask('default', 'build');

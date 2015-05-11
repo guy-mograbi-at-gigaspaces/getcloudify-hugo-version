@@ -1,5 +1,6 @@
 <div class="sidebar pure-u-1 pure-u-md-1-4">
   <div class="header">
+      <div cfy-versions></div>
     {{ partial "sidebarheader.html" . }}
 
     {{ if .Site.Params.sidebartitle }}<h1 class="brand-title">{{ .Site.Params.sidebartitle }}</h1>{{ end }}
@@ -21,7 +22,7 @@
         <a href="{{ .Url }}" target="_blank">{{ .Pre }}</a>
         {{ end }}
       {{ end }}
-      
+
     </div>
     {{ end }}
 
