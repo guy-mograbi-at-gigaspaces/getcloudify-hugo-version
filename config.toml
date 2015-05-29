@@ -2,9 +2,10 @@ baseurl = "http://getcloudify.gsdev.info.s3-website-us-east-1.amazonaws.com"
 languageCode = "en-us"
 title = "Cloudify Documentation"
 theme="hugo-redlounge"
+uglyurls=true
 
 [permalinks]
-    guide= "/3.1.0/:title"
+    guide= "/3.2.0/:filename"
 
 [params]
 categoriescss= "/style/template.css"

@@ -1,8 +1,6 @@
-<!--gsCloak__{{ .Get "title" }}{{ .Inner }}-->
-<accordion close-others="oneAtATime">
-    <accordion-group heading="Static Header, initially expanded">
-        This content is straight in the template.
-    </accordion-group>
-
-</accordion>
+<div accordion close-others="oneAtATime">
+    <div accordion-group heading="{{.Get 0}}" is-open="true">
+        {{ .Inner }}
+    </div>
+</div>
 

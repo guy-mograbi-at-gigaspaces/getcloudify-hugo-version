@@ -30,8 +30,10 @@ module.exports = function (grunt) {
                 files: [{
                     src: ['build', 'public', 'content/guide','static/**'],
                     filter: function (filepath) {
+
                         if ( filepath.indexOf('static') === 0 ) {
-                            return new RegExp('static/[a-zA-Z]+/\\d{1,2}\\.\\d{1,2}\\.\\d{1,2}').test(filepath);
+                            console.log(filepath);
+                            return new RegExp('static/([a-zA-Z]+/)?\\d{1,2}\\.\\d{1,2}\\.\\d{1,2}').test(filepath);
                         }else{
                             return true;
                         }
@@ -80,8 +82,18 @@ module.exports = function (grunt) {
                 overwrite: true,
                 replacements: [{from: /guide= .*/, to: 'guide= "<%= pkg.permalink %>"'}]
             },
+            frontmatter:{
+                src: ['<%= build.content.root %>/content/guide/*.md'],
+                overwrite:true,
+                replacements:[
+                    {
+                        from: /^---$/g, // frontmatter
+                        to: '---\n'
+                    }
+                ]
+            },
             tags: {
-                src: ['content/guide/3.2/*.md'],
+                src: ['<%= build.content.root %>/content/guide/*.md'],
                 overwrite: true,                 // overwrite matched source files
                 replacements: [{
                     from: /{%.?summary(.*)%}/g,
@@ -99,6 +111,9 @@ module.exports = function (grunt) {
                     from: /{%.?note.*title.*=((\s|\w)*)%}/g,
                     to: '{{% gsNote title="$1" %}}'
                 }, {
+                    from: /{%.?note(.*)%}/g,
+                    to: '{{% gsNote %}}'
+                }, {
                     from: /{%.?endnote(.*)%}/g,
                     to: '{{% /gsNote %}}'
                 }, {
@@ -108,7 +123,7 @@ module.exports = function (grunt) {
                     from: /{%.?endwarning(.*)%}/g,
                     to: '{{% /gsWarning %}}'
                 }, {
-                    from: /{%.?tip.*title.*=((\s|\w)*)%}/g,
+                    from: /{%.?tip.*title.*=((\s|\w|-|\?)*)%}/g,
                     to: '{{% gsTip title="$1" %}}'
                 }, {
                     from: /{%.?endtip(.*)%}/g,
@@ -116,6 +131,9 @@ module.exports = function (grunt) {
                 }, {
                     from: /{%.?info.*title.*=((\s|\w)*)%}/g,
                     to: '{{% gsInfo title="$1" %}}'
+                },  {
+                    from: /{%.?info(.*)%}/g,
+                    to: '{{% gsInfo %}}'
                 }, {
                     from: /{%.?endinfo(.*)%}/g,
                     to: '{{% /gsInfo %}}'
@@ -131,6 +149,18 @@ module.exports = function (grunt) {
                 }, {
                     from: /{%.?endgcloak(.*)%}/g,
                     to: '{{% /gsCloak %}}'
+                },{
+                    from: /{%.?inittab(.*)%}/g,
+                    to: '{{% gsInitTab %}}'
+                },{
+                    from: /{%.?endinittab(.*)%}/g,
+                    to: '{{% /gsInitTab %}}'
+                }, {
+                    from: /{%.?tabcontent ((\s|\w)*)%}/g,
+                    to: '{{% gsTabContent "$1" %}}'
+                },{
+                    from: /{%.?endtabcontent(.*)%}/g,
+                    to: '{{% /gsTabContent %}}'
                 }
                 ]
             }
@@ -145,7 +175,14 @@ module.exports = function (grunt) {
             }
 
         },
-
+        concurrent: {
+            options: {
+                logConcurrentOutput: true
+            },
+            watch: {
+                tasks: ['watch:sync', 'watch:sass', 'watch:javascript']
+            }
+        },
 
         aws_s3: {
             options: {
@@ -180,6 +217,7 @@ module.exports = function (grunt) {
                         src: ['**'],
                         dest: 'static/images/<%= build.content.version %>'
                     } // includes files in path and its subdirs
+
                 ],
                 verbose: true
 
@@ -215,6 +253,7 @@ module.exports = function (grunt) {
             },
             function (err, result, body) {
                 grunt.file.write('build/versions.json', body);
+                grunt.file.write('public/versions.json', body);
                 done();
             });
 
@@ -271,9 +310,11 @@ module.exports = function (grunt) {
         grunt.config.data.aws = grunt.file.readJSON(process.env.AWS_JSON || './dev/aws.json'); // Read the file
     });
 
+    grunt.registerTask('replaceFrontmatter', ['readConfiguration','replace:frontmatter']);
+    grunt.registerTask('replaceAll', ['readConfiguration','replace:tags']);
     grunt.registerTask('syncAll', ['readConfiguration', 'sync:content']);
     grunt.registerTask('cleanAll', ['clean']);
-    grunt.registerTask('serve', ['readConfiguration', 'sync:content','open:devserver','hugoServer','watch']);
+    grunt.registerTask('serve', ['readConfiguration','sync:content','open:devserver','listAllBranches','hugoServer','sass','concat','uglify','concurrent:watch']);
     grunt.registerTask('server', ['serve']);
 
     grunt.registerTask('replaceVersion', ['normalizeVersion', 'replace:version']);
