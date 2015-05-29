@@ -1,4 +1,6 @@
 ---
+
+
 layout: bt_wiki
 title: Types Reference
 category: Reference
@@ -8,6 +10,8 @@ pageord: 300
 
 terminology_link: reference-terminology.html
 ---
+
+
 {{% gsSummary %}}
 
 # Abstract Types
@@ -95,7 +99,7 @@ It currently has two configuration properties: `cloudify` and `cloudify_packages
 Configuration for Cloudify Manager
 
 ### schema
-{{% gsHighlight  yaml  %}}
+{{< gsHighlight  yaml  >}}
 cloudify:
     resources_prefix: {prefix}
     cloudify_agent:
@@ -114,7 +118,7 @@ cloudify:
             install_args: {install_args}
         my_plugin2:
             ...
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 ### parameters details
 * `resources_prefix` An optional prefix to be added to all resources' names. It is recommended for the prefix to end with an underscore or a dash. If omitted, no prefix will be added (Default: `""`)
@@ -138,25 +142,21 @@ cloudify:
 Links to Cloudify packages to be installed on the manager
 
 ### schema
-{{% gsHighlight  yaml  %}}
+{{< gsHighlight  yaml  >}}
 cloudify_packages:
-    server:
-        compnonets_package_url: {url}
-        core_package_url: {url}
-        ui_package_url: {url}
     agents:
         ubuntu_agent_url: {url}
         centos_agent_url: {url}
         windows_agent_url: {url}
-{{% /gsHighlight %}}
+    docker:
+        docker_url: {url}
+{{< /gsHighlight >}}
 
 ### parameters details
 
-* server
-  * `components_package_url` The URL for the Cloudify components package (Default: a URL of the relevant package).
-  * `core_package_url` The URL for the Cloudify core package (Default: a URL of the relevant package).
-  * `ui_package_url` The URL for the Cloudify UI package. If provided with an empty string, the UI won’t be installed (Default: a URL of the relevant package).
 * agents
   * `ubuntu_agent_url` The URL for the Ubuntu agent package. If provided with an empty string, no package will be downloaded (Default: a URL of the relevant package).
   * `centos_agent_url` The URL for the CentOS agent package. If provided with an empty string, no package will be downloaded (Default: a URL of the relevant package).
   * `windows_agent_url` The URL for the Windows agent package. If provided with an empty string, no package will be downloaded (Default: a URL of the relevant package).
+* docker
+  * `docker_url` The URL for the Cloudify manager docker image (Default: a URL of the relevant package).

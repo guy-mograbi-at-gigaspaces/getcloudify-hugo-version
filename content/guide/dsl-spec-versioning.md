@@ -1,12 +1,16 @@
 ---
+
+
 layout: bt_wiki
 title: Versioning
-category: DSL Specification
+category: Blueprints DSL
 publish: true
 abstract: "Cloudify DSL Versioning"
 pageord: 300
 
 ---
+
+
 {{% gsSummary %}}
 
 `tosca_definitions_version` is a top level property of the blueprint which is used to specify the DSL version used.
@@ -21,9 +25,9 @@ In future Cloudify versions, as the DSL specification evolves, this mechanism wi
 <br>
 
 Example:
-{{% gsHighlight  yaml %}}
+{{< gsHighlight  yaml >}}
 tosca_definitions_version: cloudify_dsl_1_1
 
 node_templates:
     ...
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}

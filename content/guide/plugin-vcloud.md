@@ -1,12 +1,16 @@
 ---
+
+
 layout: bt_wiki
 title: vCloud Plugin
-category: Plugins
+category: Official Plugins
 publish: true
 abstract: Cloudify vCloud plugin description and configuration
 pageord: 600
 
 ---
+
+
 {{% gsSummary %}}
 {{% /gsSummary %}}
 
@@ -273,7 +277,7 @@ Example I
 {{% gsCloak "1 " %}}
 The following is an excerpt from the blueprint's `blueprint`.`node_templates` section:
 
-{{% gsHighlight  yaml  %}}
+{{< gsHighlight  yaml  >}}
 example_server:
     type: cloudify.vcloud.nodes.Server
     properties:
@@ -368,7 +372,7 @@ vcloud_configuration:
             service: M000000000-1111
             vdc: M000000000-1111
             org: M000000000-1111
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 {{% /gsCloak %}}
 
@@ -384,7 +388,7 @@ This information will be gathered by the plugin from the following sources, each
 
 The structure of the JSON file in section (1), as well as of the `vcloud_config` property in section (2), is as follows:
 
-{{% gsHighlight  json  %}}
+{{< gsHighlight  json  >}}
 {
     "username": "",
     "password": "",
@@ -397,7 +401,7 @@ The structure of the JSON file in section (1), as well as of the `vcloud_config`
     "region": "",
     "org_url": ""
 }
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 * `username` vCloud account username.
 * `password` vCloud account password.

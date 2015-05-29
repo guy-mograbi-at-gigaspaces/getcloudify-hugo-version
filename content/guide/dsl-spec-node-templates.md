@@ -1,11 +1,15 @@
 ---
+
+
 layout: bt_wiki
 title: Node Templates
-category: DSL Specification
+category: Blueprints DSL
 publish: true
 pageord: 300
 
 ---
+
+
 {{% gsSummary %}}
 Node templates represent the actual instances of [node types](dsl-spec-node-types.html) which would eventually represent a running application/service as described in the blueprint.
 {{% /gsSummary %}}
@@ -14,7 +18,7 @@ Node templates represent the actual instances of [node types](dsl-spec-node-type
 
 The `node_templates` section in the DSL is a dictionary where each key is a node template.
 
-{{% gsHighlight  yaml %}}
+{{< gsHighlight  yaml >}}
 tosca_definitions_version: cloudify_dsl_1_0
 
 imports:
@@ -25,14 +29,32 @@ node_templates:
     ...
   node_template_2:
     ...
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 
 ## Definition
 
 
 Keyname       | Required | Type          | Description
------------   | -------- | ----          | -----------
+---
+
+---
+
+---
+
+--   | ---
+
+---
+
+-- | ---
+
+-          | ---
+
+---
+
+---
+
+--
 type          | yes      | string        | The [node type](dsl-spec-node-types.html) of this node template.
 properties    | no       | dict          | The properties of the node template matching its node type properties schema.
 instances     | no       | dict          | Instances configuration.
@@ -46,7 +68,7 @@ relationships | no       | relationships | Used for specifying the [relationship
 ### Definition Example:
 
 
-{{% gsHighlight  yaml %}}
+{{< gsHighlight  yaml >}}
 node_templates:
   node_template_1:
     type: ...
@@ -58,7 +80,7 @@ node_templates:
       ...
     relationships:
       ...
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 
 
@@ -69,19 +91,39 @@ The `instances` key is used for configuring the deployment characteristics of th
 ### Instances Definition
 
 Keyname       | Required | Type     | Default | Description
------------   | -------- | ----     | ---     | -----------
+---
+
+---
+
+---
+
+--   | ---
+
+---
+
+-- | ---
+
+-     | ---
+
+     | ---
+
+---
+
+---
+
+--
 deploy        | no       | integer  | 1       | The number of [node instances](reference-terminology.html#node-instance) this node template will have.
 
 
 ### Example:
 
-{{% gsHighlight  yaml %}}
+{{< gsHighlight  yaml >}}
 node_templates:
   vm:
     type: cloudify.openstack.nodes.Compute
     instances:
       deploy: 5
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 In the previous example, the `vm` node would have 5 instances when deployed.
 
@@ -92,7 +134,7 @@ More informatiom about number of instances combined with relationships can be fo
 
 # Example
 
-{{% gsHighlight  yaml %}}
+{{< gsHighlight  yaml >}}
 node_types:
   # The following node type is used in the node templates section
   nodes.Nginx:
@@ -137,7 +179,7 @@ node_templates:
     relationships:
       - type: cloudify.relationships.contained_in
         target: vm
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 
 

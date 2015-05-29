@@ -1,13 +1,17 @@
 ---
+
+
 layout: bt_wiki
 title: Chef Plugin
-category: Plugins
+category: Official Plugins
 publish: true
 abstract: "Chef plugin description and configuration"
 pageord: 200
 
 yaml_link: http://getcloudify.org/spec/chef-plugin/1.1/plugin.yaml
 ---
+
+
 {{% gsSummary %}}
 {{% /gsSummary %}}
 
@@ -43,7 +47,7 @@ The usage option is chosen based on presence or absence of specific properties u
 It's an error if neither of the two sets appear. You will see "Failed to find appropriate Chef manager ..." in logs if that's the case.
 
 Example:
-{{% gsHighlight  yaml  %}}
+{{< gsHighlight  yaml  >}}
 imports:
   - {{page.yaml_link}}
 node_templates:
@@ -53,7 +57,7 @@ node_templates:
       chef_config:
         cookbooks: http://chef.example.com/v1/cookbooks.tgz  # Solo
           ...
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 # Types
 
@@ -107,7 +111,7 @@ This section describes integration aspects that are common to both Chef Client a
 
 When defining a YAML node, there are several places that contain per-operation configuration. Most of the operations in Cloudify are named `cloudify.interfaces.lifecycle.*` and `cloudify.interfaces.relationship_lifecycle.*`. For convenience, when defining a node, the operation names are shortened so only the last part is used. Example:
 
-{{% gsHighlight  yaml  %}}
+{{< gsHighlight  yaml  >}}
 imports:
   - {{page.yaml_link}}
 node_templates:
@@ -119,14 +123,14 @@ node_templates:
         runlists:
           start: 'recipe[my_org_webserver::start]'  # cloudify.interfaces.lifecycle.start
           stop:  'recipe[my_org_webserver::stop]'   # cloudify.interfaces.lifecycle.stop
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 ## Specifying runlist(s)
 Under `properties` > `chef_config` you must specify either `runlist` or `runlists`.
 
 If `runlist` is given, it is used for all lifecycle operations. Example.
 
-{{% gsHighlight  yaml  %}}
+{{< gsHighlight  yaml  >}}
 imports:
   - {{page.yaml_link}}
 node_templates:
@@ -136,7 +140,7 @@ node_templates:
       chef_config:
         ...
         runlist: 'recipe[my_org_webserver::start]'  # cloudify.interfaces.lifecycle.*
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 If `runlists` is given, you can specify per-operation runlist. Operations with no runlist specified (under `runlists` > OPNAME) will not cause a Chef run.
 
@@ -146,7 +150,7 @@ A runlist can be a string (such as `recipe[my_super_recipe]`) or a list of such 
 
 Example:
 
-{{% gsHighlight  yaml  %}}
+{{< gsHighlight  yaml  >}}
 imports:
   - {{page.yaml_link}}
 node_templates:
@@ -160,14 +164,14 @@ node_templates:
           stop:                                                       # cloudify.interfaces.lifecycle.stop
               - 'recipe[my_org_webserver::stop]'
               - 'recipe[my_org_webserver::cleanup]'
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 ## Chef version to install
 
 You must specify which Chef version to install (to use as Client or Solo) under `properties` > `chef_config` > `version`. There is no default, `version` is required. You must use the same version for all YAML nodes which reside on the same server.
 
 Example:
-{{% gsHighlight  yaml  %}}
+{{< gsHighlight  yaml  >}}
 imports:
   - {{page.yaml_link}}
 node_templates:
@@ -177,7 +181,7 @@ node_templates:
       chef_config:
         version: 11.10.4-1
         ...
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 
 ## Automatic Chef attributes
@@ -213,7 +217,7 @@ All attributes provided in the blueprint, under `properties` > `chef_config` > `
 ## Node properties as Chef attributes example:
 
 Say the node properties are:
-{{% gsHighlight  yaml  %}}
+{{< gsHighlight  yaml  >}}
 node_templates:
   some node:
     type: some_type
@@ -222,7 +226,7 @@ node_templates:
       some_map:
         prop1: value1
         prop2: value2
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 The following Chef attributes will be available:
 
@@ -252,7 +256,7 @@ The reference is done using specifically constructed hash in place where the val
 * `{related_runtime_property: path.to.something}`
 
 Example:
-{{% gsHighlight  yaml  %}}
+{{< gsHighlight  yaml  >}}
 imports:
   - {{page.yaml_link}}
 node_templates:
@@ -281,7 +285,7 @@ node_templates:
         ...
         attributes:
           db_port: 27017
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
 
 
 # Chef Solo
@@ -318,12 +322,20 @@ Chef configuration properties correspond to [properties in client.rb](http://doc
   * `node_name_prefix` - Cloudify specific, see [Chef server naming](#chef-server-naming)
   * `node_name_suffix` - Cloudify specific, see [Chef server naming](#chef-server-naming)
   * `validation_client_name` (usually `chef-validator`)
-  * `validation_key` - contents for the validation file (as opposed to file path originally), should have the form of `"-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----\n"`.
+  * `validation_key` - contents for the validation file (as opposed to file path originally), should have the form of `"---
+
+--BEGIN RSA PRIVATE KEY---
+
+--\n...\n---
+
+--END RSA PRIVATE KEY---
+
+--\n"`.
 
 # Examples
 
 Sample Chef YAML node:
-{{% gsHighlight  yaml  %}}
+{{< gsHighlight  yaml  >}}
 node_temlates:
   chef_node_one:
     type: cloudify.chef.nodes.DBMS
@@ -335,9 +347,17 @@ node_temlates:
         chef_server_url: https://10.20.30.40:443
         validation_client_name: chef-validator
         validation_key: |
-          -----BEGIN RSA PRIVATE KEY-----
+          ---
+
+--BEGIN RSA PRIVATE KEY---
+
+--
           ...
-          -----END RSA PRIVATE KEY-----
+          ---
+
+--END RSA PRIVATE KEY---
+
+--
         node_name_prefix: chef-node-
         node_name_suffix: .cloudify.example.com
 
@@ -355,4 +375,4 @@ node_temlates:
     relationships:
       - type: cloudify.relationships.contained_in
         target: my_server
-{{% /gsHighlight %}}
+{{< /gsHighlight >}}
